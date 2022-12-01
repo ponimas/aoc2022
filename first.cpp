@@ -17,12 +17,14 @@ int main(int argc, char *argv[]) {
   auto v = std::vector<int>();
 
   for (std::string line; std::getline(file, line);) {
-    if (!line.empty()) {
-      v.push_back(std::stoi(line));
-    } else {
+
+    if (line.empty()) {
       c.push_back(v);
       v = std::vector<int>();
+      continue;
     }
+
+    v.push_back(std::stoi(line));
   }
 
   std::vector<int> cc(c.size());
