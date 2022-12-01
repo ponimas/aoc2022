@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   auto v = std::vector<int>();
 
   for (std::string line; std::getline(file, line);) {
-    if (line != "") {
+    if (!line.empty()) {
       v.push_back(std::stoi(line));
     } else {
       c.push_back(v);
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
                  [](auto v) { return std::reduce(v.begin(), v.end()); });
 
   std::sort(cc.begin(), cc.end());
-  std::cout << cc[cc.size() - 1] << std::endl;
+  std::cout << cc.back() << std::endl;
   std::cout << std::reduce(cc.end() - 3, cc.end()) << std::endl;
 
   return 0;
