@@ -30,6 +30,9 @@ int main(int argc, char *argv[]) {
   std::transform(c.begin(), c.end(), cc.begin(),
                  [](auto v) { return std::reduce(v.begin(), v.end()); });
 
-  std::cout << *std::max_element(cc.begin(), cc.end()) << std::endl;
+  std::sort(cc.begin(), cc.end());
+  std::cout << cc[cc.size() - 1] << std::endl;
+  std::cout << std::reduce(cc.end() - 3, cc.end()) << std::endl;
+
   return 0;
 }
