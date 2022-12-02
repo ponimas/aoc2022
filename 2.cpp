@@ -1,47 +1,17 @@
-#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <iterator>
-#include <numeric>
 #include <string>
-#include <vector>
+#include <unordered_map>
 
-#include "matchit.h"
+std::unordered_map<std::string, int> match_one{
+    {"A X", 3 + 1}, {"B X", 3 + 1}, {"C X", 3 + 1},
+    {"A Y", 6 + 2}, {"B Y", 3 + 2}, {"C Y", 0 + 2},
+    {"A Z", 0 + 3}, {"B Z", 6 + 3}, {"C Z", 3 + 3}};
 
-int match_one(std::string cs) {
-  using namespace matchit;
-
-  return match(cs[0], cs[2])(
-      pattern | ds('A', 'X') = [] { return 3 + 1; },
-      pattern | ds('B', 'X') = [] { return 0 + 1; },
-      pattern | ds('C', 'X') = [] { return 6 + 1; },
-
-      pattern | ds('A', 'Y') = [] { return 6 + 2; },
-      pattern | ds('B', 'Y') = [] { return 3 + 2; },
-      pattern | ds('C', 'Y') = [] { return 0 + 2; },
-
-      pattern | ds('A', 'Z') = [] { return 0 + 3; },
-      pattern | ds('B', 'Z') = [] { return 6 + 3; },
-      pattern | ds('C', 'Z') = [] { return 3 + 3; });
-}
-
-int match_two(std::string cs) {
-  using namespace matchit;
-
-  return match(cs[0], cs[2])(
-      pattern | ds('A', 'X') = [] { return 0 + 3; },
-      pattern | ds('B', 'X') = [] { return 0 + 1; },
-      pattern | ds('C', 'X') = [] { return 0 + 2; },
-
-      pattern | ds('A', 'Y') = [] { return 3 + 1; },
-      pattern | ds('B', 'Y') = [] { return 3 + 2; },
-      pattern | ds('C', 'Y') = [] { return 3 + 3; },
-
-      pattern | ds('A', 'Z') = [] { return 6 + 2; },
-      pattern | ds('B', 'Z') = [] { return 6 + 3; },
-      pattern | ds('C', 'Z') = [] { return 6 + 1; });
-}
-
+std::unordered_map<std::string, int> match_two{
+    {"A X", 0 + 3}, {"B X", 0 + 1}, {"C X", 0 + 2},
+    {"A Y", 3 + 1}, {"B Y", 3 + 2}, {"C Y", 3 + 3},
+    {"A Z", 6 + 2}, {"B Z", 6 + 3}, {"C Z", 6 + 1}};
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -52,8 +22,8 @@ int main(int argc, char *argv[]) {
   int score_one = 0, score_two = 0;
 
   for (std::string line; std::getline(file, line);) {
-    score_one += match_one(line);
-    score_two += match_two(line);
+    score_one += match_one[line];
+    score_two += match_two[line];
   }
 
   std::cout << score_one << std::endl;
