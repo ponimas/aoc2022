@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: [-xc++, -Wall, -std=gnu++2b]
+  Add: [-xc++, -Wall, -std=gnu++20, -I../vcpkg/installed/x64-linux/include ]
