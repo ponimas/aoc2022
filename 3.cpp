@@ -5,6 +5,7 @@
 #include <iterator>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 int prio(char c) {
   int p = c - 96;
@@ -20,9 +21,17 @@ int main(int argc, char *argv[]) {
   }
 
   std::ifstream file(argv[1]);
-  int sum = 0;
+  int sum_one = 0;
+  int sum_two = 0;
+
+
+  std::vector<std::string> data;
 
   for (std::string line; std::getline(file, line);) {
+
+    auto line_copy = std::string(line);
+    std::sort(line_copy.begin(), line_copy.end());
+    data.push_back(line_copy);
 
     int l = line.length() / 2;
 
@@ -34,10 +43,32 @@ int main(int argc, char *argv[]) {
     std::set_intersection(line.begin(), line.end() - l,
                           line.begin() + l, line.end(),
                           std::inserter(v, v.begin()));
-    std::cout << std::string(v.begin(), v.end()) << std::endl;
-    for (char c : v) {sum += prio(c);};
+
+    for (char c : v) {sum_one += prio(c);};
   }
 
-  std::cout << sum << std::endl;
+  for (int i = 0; i < data.size(); i += 3) {
+
+    std::unordered_set<char> a;
+    std::unordered_set<char> b;
+
+    auto x = data[i];
+    auto y = data[i+1];
+    auto z = data[i+2];
+
+
+    std::set_intersection(x.begin(), x.end(),
+                          y.begin(), y.end(),
+                          std::inserter(a, a.begin()));
+    for (char c: z) {
+      if (a.contains(c)) {
+        sum_two += prio(c);
+        break;
+      };
+    }
+  }
+  
+  std::cout << sum_one << std::endl;
+  std::cout << sum_two << std::endl;
 
 }
