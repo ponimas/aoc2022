@@ -1,12 +1,83 @@
 #include <fstream>
 #include <iostream>
+#include <queue>
 #include <utility>
 #include <vector>
-#include <queue>
 
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
+typedef std::pair<int, int> pos;
+
+int solution(std::vector<std::string> data, pos start,
+             std::function<bool(pos)> done,
+             std::function<bool(char, char)> nogo) {
+
+  int max_x = data[0].size() - 1;
+  int max_y = data.size() - 1;
+
+  bool visited[data.size()][data[0].size()];
+  std::fill_n(&visited[0][0], sizeof(visited) / sizeof(**visited), false);
+
+  std::queue<std::vector<pos>> q{};
+  std::vector<pos> s{};
+
+  s.push_back(start);
+  q.push(s);
+
+  bool found = false;
+
+  while (!q.empty()) {
+    auto n = q.front();
+    q.pop();
+
+    auto cur = n.back();
+
+    // fmt::print("{}\n", fmt::join(n, ">"));
+    char c = data[cur.second][cur.first];
+
+    std::vector<pos> neighbours{
+        {cur.first - 1, cur.second},
+        {cur.first + 1, cur.second},
+        {cur.first, cur.second - 1},
+        {cur.first, cur.second + 1},
+    };
+
+    for (auto ngb : neighbours) {
+      int nx = ngb.first;
+      int ny = ngb.second;
+
+      if (visited[ny][nx] || nx < 0 || nx > max_x || ny < 0 || ny > max_y)
+        continue;
+
+      char nc = data[ny][nx];
+
+      if (nogo(nc, c))
+        continue;
+
+      auto ns = n;
+      ns.push_back({nx, ny});
+      q.push(ns);
+      visited[ny][nx] = true;
+
+      if (done(pos{nx, ny})) {
+        found = true;
+        break;
+      }
+    }
+
+    if (found) break;
+  }
+
+  /*
+  for (auto p: q.back()) {
+    std::cout << data[p.second][p.first] << fmt::format("{} ", p);
+  }
+  std::cout << std::endl;
+  */
+
+  return q.back().size() - 1;
+}
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -15,8 +86,7 @@ int main(int argc, char *argv[]) {
 
   std::ifstream file(argv[1]);
 
-  std::pair<int,int> start, stop;
-
+  pos start, stop;
   int y = 0;
   std::vector<std::string> data;
 
@@ -35,71 +105,15 @@ int main(int argc, char *argv[]) {
     y++;
   }
 
-  fmt::print("{}\n", fmt::join(data, "\n"));
-  int max_x = data[0].size() - 1;
-  int max_y = data.size() - 1;
+  // fmt::print("{}\n", fmt::join(data, "\n"));
 
-  bool visited[data.size()][data[0].size()];
-  std::fill_n(&visited[0][0], sizeof(visited) / sizeof(**visited), false);
+  int first = solution(
+      data, start, [&](pos x) { return x == stop; },
+      [](char nc, char c) { return nc - 1 > c; });
+  int second = solution(
+      data, stop, [&](pos x) { return data[x.second][x.first] == 'a'; },
+      [](char nc, char c) { return nc + 1 < c; });
 
-  std::queue<std::vector<std::pair<int, int>>> q{};
-  std::vector<std::pair<int, int>> s{};
-
-  s.push_back(start);
-  q.push(s);
-
-  bool found = false;
-
-  while(!q.empty()) {
-    auto n = q.front();
-    q.pop();
-
-    auto cur = n.back();
-    // fmt::print("{}\n", fmt::join(n, ">"));
-    char c = data[cur.second][cur.first];
-
-    std::vector<std::pair<int,int>> neighbours {
-      {cur.first - 1, cur.second},
-      {cur.first + 1, cur.second},
-      {cur.first, cur.second - 1},
-      {cur.first, cur.second + 1},
-    };
-
-    for (auto ngb : neighbours) {
-      int nx = ngb.first;
-      int ny = ngb.second;
-
-      if (found)
-        break;
-      if (visited[ny][nx])
-        continue;
-      if (nx < 0 || nx > max_x || ny < 0 || ny > max_y)
-        continue;
-
-      char nc = data[ny][nx];
-      if (nc - 1 > c)
-        continue;
-
-      auto ns = n;
-      ns.push_back({nx, ny});
-      q.push(ns);
-      visited[ny][nx] = true;
-      if (stop.first == nx && stop.second == ny)
-        found = true;
-    }
-    if (found)
-      break;
-  }
-
-  auto solve = q.back();
-
-  /*
-  for (auto p: solve) {
-    std::cout << data[p.second][p.first] << fmt::format("{} ", p);
-  }
-  std::cout << std::endl;
-  */
-
-
-  std::cout << q.back().size() - 1 << std::endl;
+  std::cout << first << std::endl;
+  std::cout << second << std::endl;
 }
