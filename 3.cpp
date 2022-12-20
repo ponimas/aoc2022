@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   for (std::string line; std::getline(file, line);) {
 
     auto line_copy = std::string(line);
-    std::sort(line_copy.begin(), line_copy.end());
+    std::ranges::sort(line_copy);
     data.push_back(line_copy);
 
     int l = line.length() / 2;
