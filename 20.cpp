@@ -48,10 +48,11 @@ void result(std::vector<point> &data) {
     }
   }
 
-  int s =0;
+  long s =0;
+
   for (int x: {1000, 2000, 3000}){
     int z = std::div(x + pos, data.size()).rem;
-    // std::cout <<  data[z].second << std::endl;
+    // std::cout << x << " " << z << ": " << data[z].second << std::endl;
     s += data[z].second;
   }
   std::cout <<  s << std::endl;
@@ -59,10 +60,6 @@ void result(std::vector<point> &data) {
 
 
 int main(int argc, char *argv[]) {
-
-  // std::cout << "Long Int Max " << std::numeric_limits<long int>::max() << std::endl;
-  // std::cout << "Long Long Int Max " << std::numeric_limits<long long int>::max() << std::endl;
-
   if (argc < 2) {
     return 1;
   }
